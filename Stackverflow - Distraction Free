@@ -1,0 +1,3 @@
+javascript:(function(){
+    document.getElementById("mainbar").style.width="90%";
+})();

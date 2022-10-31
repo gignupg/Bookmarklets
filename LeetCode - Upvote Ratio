@@ -1,0 +1,11 @@
+javascript:(function(){
+    const elements = document.getElementsByClassName("no__1erK"); 
+    for (let i = 0; i < elements.length; i++) {
+        if (i % 2) {
+            const upvotes = Number(elements[i - 1].innerHTML.replace('.', '').replace('K', '00'));
+            const views = Number(elements[i].innerHTML.replace('.', '').replace('K', '00'));
+            const score = (upvotes / views * 100).toFixed(2).toString();
+            elements[i].innerHTML = score;
+        }
+    }
+})();
