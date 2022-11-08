@@ -1,0 +1,8 @@
+javascript:(function(){
+    const elements = document.getElementsByClassName('e5i1odf2'); 
+    const htmlAsString = elements[2].innerHTML;
+    const formattedOutput = htmlAsString.split('<br>');
+    for (const line of formattedOutput) {
+        console.log(line);
+    }
+})();
