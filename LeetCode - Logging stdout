@@ -1,8 +1,10 @@
 javascript:(function(){
     const elements = document.getElementsByClassName('e5i1odf2'); 
-    const htmlAsString = elements[2].innerHTML;
-    const formattedOutput = htmlAsString.split('<br>');
-    for (const line of formattedOutput) {
-        console.log(line);
+    for (const elem of elements) {
+        const htmlAsString = elem.innerHTML;
+        const formattedOutput = htmlAsString.split('<br>');
+        for (const line of formattedOutput) {
+            if (line.length < 500) console.log(line);
+        }
     }
 })();
