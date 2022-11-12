@@ -1,0 +1,15 @@
+javascript:(function(){
+    const sections = ['', 'INPUT:', 'STDOUT:', 'OUTPUT:', 'EXPECTED:'];
+    const elements = document.getElementsByClassName('e5i1odf2'); 
+    for (let i = 1; i < elements.length; i++) {
+        const distanceToEnd = elements.length - 1 - i;
+        if (i === 1) console.log(sections[i]);
+        else console.log(sections[elements.length - 1 - distanceToEnd]);
+        const elem = elements[i];
+        const htmlAsString = elem.innerHTML;
+        const formattedOutput = htmlAsString.split('<br>');
+        for (const line of formattedOutput) {
+            console.log(line);
+        }
+    }
+})();
