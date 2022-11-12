@@ -8,6 +8,6 @@ Useful code snippets to enhance/personalize the user experience of various websi
 4. Choose a name
 5. Paste the code of the bookmarklet you want to use in the URL field
 6. Save your bookmark
-7. Go to the website on which you want to use the bookmarklet
+7. Go to the website on which you want to use your bookmarklet
 8. Find the bookmarklet in the bookmarks bar and click on it
 9. That's it!
