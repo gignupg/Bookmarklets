@@ -1,0 +1,5 @@
+javascript: (function () {
+    const subtitleText = document.getElementsByClassName('jss4')[0];
+    console.log(subtitleText);
+    subtitleText.style.fontFamily = 'monospace';
+})();
