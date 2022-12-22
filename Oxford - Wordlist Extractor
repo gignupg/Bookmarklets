@@ -1,0 +1,13 @@
+javascript: (function () {
+    const wordlist = document.getElementsByClassName('top-g')[0].children;
+    lists = {};
+    for (let i = 0; i < wordlist.length; i++) {
+        const word = wordlist[i].dataset.hw;
+        const level = wordlist[i].dataset.ox5000;
+        const form = wordlist[i].children[1].innerHTML;
+        if (!lists[level]) lists[level] = {};
+        if (!lists[level][form]) lists[level][form] = [];
+        lists[level][form].push(word);
+    }
+    console.log('lists', lists);
+})();
