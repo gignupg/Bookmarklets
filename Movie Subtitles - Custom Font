@@ -1,5 +1,5 @@
 javascript: (function () {
-    const subtitleText = document.getElementsByClassName('jss4')[0];
+    const subtitleText = document.getElementsByClassName('jss6')[0];
     subtitleText.style.fontFamily = 'monospace';
     subtitleText.style.textShadow = '2px 2px 5px red';
 })();
