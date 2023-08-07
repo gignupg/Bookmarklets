@@ -4,8 +4,8 @@ javascript: (function () {
     const subtitleArrows = document.getElementsByClassName('jss26');
     subtitleBackground.style.backgroundColor = 'orange';
     subtitleText.style.color = 'purple';
-    arrows[0].style.color = 'purple';
-    arrows[1].style.color = 'purple';
+    subtitleArrows[0].style.color = 'purple';
+    subtitleArrows[1].style.color = 'purple';
     subtitleText.style.fontFamily = 'monospace';
     subtitleText.style.textShadow = '2px 2px 5px red';
 })();
