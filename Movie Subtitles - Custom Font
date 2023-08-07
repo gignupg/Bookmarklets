@@ -1,8 +1,13 @@
 javascript: (function () {
     const subtitleBackground = document.getElementsByClassName('jss4')[0];
     const subtitleText = document.getElementsByClassName('jss6')[0];
+    const subtitleArrows = document.getElementsByClassName('jss26');
+    const arrow1 = subtitleArrows[0];
+    const arrow2 = subtitleArrows[1];
     subtitleBackground.style.backgroundColor = 'orange';
-    subtitleText.style.color= 'purple';
+    subtitleText.style.color = 'purple';
+    arrow1.style.color = 'purple';
+    arrow2.style.color = 'purple';
     subtitleText.style.fontFamily = 'monospace';
     subtitleText.style.textShadow = '2px 2px 5px red';
 })();
