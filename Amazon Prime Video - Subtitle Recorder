@@ -1,8 +1,10 @@
-let subtitles = "";
+let currentSubtitles = "";
+let subtitlesArray = [];
 let subtitleCount = 0;
 let isSubtitleVisible = false;
 let currentStartTime = null;
 let currentText = "";
+let lastTime = 0;
 
 function formatTime(seconds) {
     const hours = Math.floor(seconds / 3600);
@@ -20,7 +22,7 @@ function appendSRT(start, end, text) {
     subtitleCount++;
     const startStr = formatTime(start);
     const endStr = formatTime(end);
-    subtitles += `${subtitleCount}\n${startStr} --> ${endStr}\n${text}\n\n`;
+    currentSubtitles += `${subtitleCount}\n${startStr} --> ${endStr}\n${text}\n\n`;
 }
 
 const observerInit = setInterval(() => {
@@ -41,7 +43,35 @@ const observerInit = setInterval(() => {
             mutations.forEach((mutation) => {
                 console.log(`Mutation in parent ${index + 1}`);
                 const subtitleElement = subtitleParent.querySelector(".atvwebplayersdk-captions-text");
-                const time = document.getElementsByTagName("video")[1].currentTime;
+
+                const videos = document.getElementsByTagName("video");
+                if (videos.length === 0) {
+                    console.log("No video elements found. Skipping mutation.");
+                    return;
+                }
+                let video = videos[1] || videos[0]; // Prefer the second video if available, fallback to first
+                if (!video) {
+                    console.log("Unable to find a valid video element. Skipping mutation.");
+                    return;
+                }
+                const time = video.currentTime;
+
+                if (time < lastTime && lastTime > 0) {
+                    console.log("Episode change detected");
+                    if (isSubtitleVisible) {
+                        console.log("End Time (episode change):", lastTime);
+                        appendSRT(currentStartTime, lastTime, currentText);
+                        isSubtitleVisible = false;
+                        currentStartTime = null;
+                        currentText = "";
+                    }
+                    if (currentSubtitles.length > 0) {
+                        subtitlesArray.push(currentSubtitles);
+                        currentSubtitles = "";
+                        subtitleCount = 0;
+                    }
+                }
+
                 if (subtitleElement) {
                     const text = subtitleElement.innerText.trim();
                     if (!isSubtitleVisible || text !== currentText) {
@@ -64,6 +94,8 @@ const observerInit = setInterval(() => {
                         console.log("End Time:", time);
                     }
                 }
+
+                lastTime = time;
             });
         });
 
@@ -77,19 +109,25 @@ const observerInit = setInterval(() => {
     console.log("Subtitle observers initialized.");
 }, 500); // check every 500ms
 
-function downloadSubtitles(filename = 'subtitles.srt') {
-    if (!subtitles) {
+function downloadSubtitles(filenamePrefix = 'subtitles') {
+    let filesToDownload = [...subtitlesArray];
+    if (currentSubtitles.length > 0) {
+        filesToDownload.push(currentSubtitles);
+    }
+    if (filesToDownload.length === 0) {
         console.log("No subtitles to download.");
         return;
     }
-    const blob = new Blob([subtitles], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    console.log("Subtitles downloaded as", filename);
+    filesToDownload.forEach((subs, index) => {
+        const blob = new Blob([subs], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${filenamePrefix}_${index + 1}.srt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+    console.log(`Downloaded ${filesToDownload.length} subtitle files.`);
 }
