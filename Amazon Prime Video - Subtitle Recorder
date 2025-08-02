@@ -1,0 +1,95 @@
+let subtitles = "";
+let subtitleCount = 0;
+let isSubtitleVisible = false;
+let currentStartTime = null;
+let currentText = "";
+
+function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    const millis = Math.floor((seconds % 1) * 1000);
+    return `${pad(hours)}:${pad(minutes)}:${pad(secs)},${pad(millis, 3)}`;
+}
+
+function pad(num, digits = 2) {
+    return num.toString().padStart(digits, '0');
+}
+
+function appendSRT(start, end, text) {
+    subtitleCount++;
+    const startStr = formatTime(start);
+    const endStr = formatTime(end);
+    subtitles += `${subtitleCount}\n${startStr} --> ${endStr}\n${text}\n\n`;
+}
+
+const observerInit = setInterval(() => {
+    const subtitleParents = document.querySelectorAll(".atvwebplayersdk-captions-overlay");
+
+    if (subtitleParents.length === 0) {
+        console.log("Waiting for subtitle parents... none found yet.");
+        return;
+    }
+
+    console.log(`Found ${subtitleParents.length} subtitle parents.`);
+    clearInterval(observerInit); // Stop checking once found
+
+    subtitleParents.forEach((subtitleParent, index) => {
+        console.log(`Initializing observer for subtitle parent ${index + 1}:`, subtitleParent);
+
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                console.log(`Mutation in parent ${index + 1}`);
+                const subtitleElement = subtitleParent.querySelector(".atvwebplayersdk-captions-text");
+                const time = document.getElementsByTagName("video")[1].currentTime;
+                if (subtitleElement) {
+                    const text = subtitleElement.innerText.trim();
+                    if (!isSubtitleVisible || text !== currentText) {
+                        // If text changed without disappearing, end the previous one
+                        if (isSubtitleVisible) {
+                            console.log("End Time (text change):", time);
+                            appendSRT(currentStartTime, time, currentText);
+                        }
+                        isSubtitleVisible = true;
+                        currentStartTime = time;
+                        currentText = text;
+                        console.log("Start Time:", time, "Text:", text);
+                    }
+                } else {
+                    if (isSubtitleVisible) {
+                        appendSRT(currentStartTime, time, currentText);
+                        isSubtitleVisible = false;
+                        currentStartTime = null;
+                        currentText = "";
+                        console.log("End Time:", time);
+                    }
+                }
+            });
+        });
+
+        observer.observe(subtitleParent, {
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+    });
+
+    console.log("Subtitle observers initialized.");
+}, 500); // check every 500ms
+
+function downloadSubtitles(filename = 'subtitles.srt') {
+    if (!subtitles) {
+        console.log("No subtitles to download.");
+        return;
+    }
+    const blob = new Blob([subtitles], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    console.log("Subtitles downloaded as", filename);
+}
