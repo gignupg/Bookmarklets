@@ -1,0 +1,4 @@
+javascript: (function () {
+    document.getElementsByClassName("xrayQuickView")[0].remove();
+    document.getElementsByClassName("atvwebplayersdk-title-text")[0].parentElement.parentElement.remove();
+})();
